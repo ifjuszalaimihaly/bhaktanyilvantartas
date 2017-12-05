@@ -17,9 +17,9 @@ class DepartmentsController extends AppController
         'order' => ['Departments.name' => 'asc'],
         ];
 
-    public function members($date = null)
+    public function members($centerId = null, $date = null)
     {
-
+        $user = $this->request->session()->read('Auth.User');
         $departments = $this->Departments->find('members', ['date' => $date]);
 
         $this->set(compact('departments'));
