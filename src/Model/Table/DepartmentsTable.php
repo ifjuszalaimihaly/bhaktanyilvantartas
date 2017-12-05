@@ -105,7 +105,7 @@ class DepartmentsTable extends Table
     public function findByCenter(Query $query, array $options)
     {
         if ($options['centerId'] != null) {
-            return $query->find()->where(['center_id' => $options['Departments.centerId']])->contain('Centers');
+            return $query->find('all')->where(['center_id' => $options['centerId']])->contain('Centers');
         }
         return $query->contain('Centers');
     }
