@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Model\Table;
 
 use Cake\ORM\Query;
@@ -74,22 +75,23 @@ class DepartmentsTable extends Table
         return $query
             ->select(
                 [
-                    'Departments.id', 'Departments.name',
+                    'Departments.id',
+                    'Departments.name',
                 ]
             )
             ->contain(
-            [
-                'Services' => function ($q) use ($options) {
-                    return $q->find('current', $options)
-                        ->contain(
-                            [
-                                'Bhaktas' => function ($q) {
-                                    return $q->where(['Bhaktas.communityrole_id IN' => [1, 2]]);
+                [
+                    'Services' => function ($q) use ($options) {
+                        return $q->find('current', $options)
+                            ->contain(
+                                [
+                                    'Bhaktas' => function ($q) {
+                                        return $q->where(['Bhaktas.communityrole_id IN' => [1, 2]]);
                                     }
-                            ]
-                        )->order('Bhaktas.nev_avatott');
-                }
-            ]
+                                ]
+                            )->order('Bhaktas.nev_avatott');
+                    }
+                ]
             )
             ->formatResults(function (\Cake\Collection\CollectionInterface $results) {
                 return $results->map(function ($row) {
@@ -98,5 +100,12 @@ class DepartmentsTable extends Table
                 });
             })
             ->sortBy('manpower');
+    }
+
+    public function findByCenter(Query $query, array $options)
+    {
+        if ($options['centerId'] != null) {
+            return $query->find()->where(['center_id' => $options['centerId']]);
+        }
     }
 }
