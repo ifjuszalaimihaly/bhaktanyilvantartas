@@ -19,8 +19,8 @@ class DepartmentsController extends AppController
 
     public function members($centerId = null, $date = null)
     {
+        $this->loadModel('AppUser');
         $user = $this->request->session()->read('Auth.User');
-
         $departments = $this->Departments->find('ByCenter',['centerId' => $centerId])->find('members', ['date' => $date])->toArray();
         $this->set(compact('departments'));
         $this->set('_serialize', ['departments']);
