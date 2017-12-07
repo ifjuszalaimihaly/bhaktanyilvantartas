@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Model\Table;
 
 use Cake\ORM\Query;
@@ -64,5 +65,11 @@ class CentersTable extends Table
             ->notEmpty('name');
 
         return $validator;
+    }
+
+    public function findByCenterIdAndUserId(Query $query, array $options)
+    {
+        return $query->innerJoinWith('AppUsers');//->where(['Users.id' => $options['userId']])->where(['Centers.id' => $options['centerId']])->all();
+
     }
 }

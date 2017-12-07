@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Controller\AppController;
@@ -15,13 +16,21 @@ class DepartmentsController extends AppController
 
     public $paginate = [
         'order' => ['Departments.name' => 'asc'],
-        ];
+    ];
 
     public function members($centerId = null, $date = null)
     {
-        $this->loadModel('AppUser');
+        $this->loadModel('Centers');
+        $center = null;
         $user = $this->request->session()->read('Auth.User');
-        $departments = $this->Departments->find('ByCenter',['centerId' => $centerId])->find('members', ['date' => $date])->toArray();
+        debug($user['id']);
+        if ($centerId != null) {
+            $center = $this->Centers->find('ByCenterIdAndUserId',['centerId' => $centerId, 'userId' => $user['id']]);
+            debug($center); die();
+        }
+        debug($center->AppUsers);
+        $departments = $this->Departments->find('ByCenter', ['centerId' => $centerId])->find('members',
+            ['date' => $date])->toArray();
         $this->set(compact('departments'));
         $this->set('_serialize', ['departments']);
     }

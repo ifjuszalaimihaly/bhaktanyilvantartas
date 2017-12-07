@@ -13,6 +13,15 @@ use CakeDC\Users\Model\Table\UsersTable;
 
 class AppUsersTable extends UsersTable
 {
+    /*
+    public function initialize(array $config)
+    {
+        parent::initialize($config);
+        $this->setTable('users');
+        $this->setDisplayField('username');
+        $this->setPrimaryKey('id');
+    }*/
+
     public function findSuperUsers(Query $query, array $options)
     {
         return $query->select(['AppUsers.username', 'AppUsers.email'])
