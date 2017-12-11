@@ -18,26 +18,28 @@ class DepartmentsController extends AppController
         'order' => ['Departments.name' => 'asc'],
     ];
 
-    public function members($centerId = null, $date = null)
+    public function members(int $centerId = null, string $date = null)
     {
-        $this->loadModel('Centers');
         $user = $this->request->session()->read('Auth.User');
+
         if($user['role'] != 'superuser') {
-            $centers = $this->Centers->find('ByIdAndUserId',
-                ['centerId' => $centerId, 'userId' => $user['id']])->toArray();
+            $centers = $this->Departments->Centers->find('ByIdAndUserId',
+                ['centerId' => $centerId, 'userId' => $user['id']]);
         } else{
             if($centerId == null){
-                $centers = $this->Centers->find('all')->toArray();
+                $centers = $this->Departments->Centers->find('all');
             } else {
-                $centers = $this->Centers->get($centerId)->toArray();
+                $centers = $this->Departments->Centers->find()->where(['id' => $centerId]);
             }
         }
-        $centerIds = [];
-        foreach ($centers as $center){
-            $centerIds[] = $center->id;
-        }
-        $departments = $this->Departments->find('ByCenter', ['centerIds' => $centerIds])->find('members',
-            ['date' => $date])->toArray();
+        $departments = $this->Departments->find()
+            ->matching(
+                'Centers',
+                function ($q) use ($centers) {
+                    return $q->where(['Centers.id IN' => $centers->extract('id')->toArray()]);
+                }
+            )
+            ->find('members', ['date' => $date])->groupBy('Center.id');
         $this->set(compact('departments'));
         $this->set('_serialize', ['departments']);
     }
