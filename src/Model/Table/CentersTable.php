@@ -67,9 +67,17 @@ class CentersTable extends Table
         return $validator;
     }
 
-    public function findByCenterIdAndUserId(Query $query, array $options)
+    public function findByIdAndUserId(Query $query, array $options)
     {
-        return $query->innerJoinWith('AppUsers');//->where(['Users.id' => $options['userId']])->where(['Centers.id' => $options['centerId']])->all();
+        if($options['centerId'] != null){
+            return $query->find('ByUserId')->where(['Centers.id' => $options['centerId']]);
+        }
+        return $query->find('ByUserId');
 
+    }
+
+    public function findByUserId(Query $query, array $options)
+    {
+        return $query->innerJoinWith('AppUsers')->where(['AppUsers.id' => $options['userId']]);
     }
 }

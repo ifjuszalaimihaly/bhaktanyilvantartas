@@ -21,15 +21,22 @@ class DepartmentsController extends AppController
     public function members($centerId = null, $date = null)
     {
         $this->loadModel('Centers');
-        $center = null;
         $user = $this->request->session()->read('Auth.User');
-        debug($user['id']);
-        if ($centerId != null) {
-            $center = $this->Centers->find('ByCenterIdAndUserId',['centerId' => $centerId, 'userId' => $user['id']]);
-            debug($center); die();
+        if($user['role'] != 'superuser') {
+            $centers = $this->Centers->find('ByIdAndUserId',
+                ['centerId' => $centerId, 'userId' => $user['id']])->toArray();
+        } else{
+            if($centerId == null){
+                $centers = $this->Centers->find('all')->toArray();
+            } else {
+                $centers = $this->Centers->get($centerId)->toArray();
+            }
         }
-        debug($center->AppUsers);
-        $departments = $this->Departments->find('ByCenter', ['centerId' => $centerId])->find('members',
+        $centerIds = [];
+        foreach ($centers as $center){
+            $centerIds[] = $center->id;
+        }
+        $departments = $this->Departments->find('ByCenter', ['centerIds' => $centerIds])->find('members',
             ['date' => $date])->toArray();
         $this->set(compact('departments'));
         $this->set('_serialize', ['departments']);
