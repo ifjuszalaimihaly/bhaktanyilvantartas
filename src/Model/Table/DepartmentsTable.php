@@ -101,14 +101,4 @@ class DepartmentsTable extends Table
             })
             ->sortBy('manpower');
     }
-
-    public function findByCenter(Query $query, array $options)
-    {
-        if ($options['centerIds'] != null) {
-            return $query->find('all')
-                ->where(['center_id IN' => $options['centerIds']])
-                ->contain('Centers');
-        }
-        return $query->contain('Centers');
-    }
 }
