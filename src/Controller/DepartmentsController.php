@@ -22,11 +22,11 @@ class DepartmentsController extends AppController
     {
         $user = $this->request->session()->read('Auth.User');
 
-        if($user['role'] != 'superuser') {
+        if ($user['role'] != 'superuser') {
             $centers = $this->Departments->Centers->find('ByIdAndUserId',
                 ['centerId' => $centerId, 'userId' => $user['id']]);
-        } else{
-            if($centerId == null){
+        } else {
+            if ($centerId == null) {
                 $centers = $this->Departments->Centers->find('all');
             } else {
                 $centers = $this->Departments->Centers->find()->where(['id' => $centerId]);
@@ -38,8 +38,7 @@ class DepartmentsController extends AppController
                 function ($q) use ($centers) {
                     return $q->where(['Centers.id IN' => $centers->extract('id')->toArray()]);
                 }
-            )
-            ->find('members', ['date' => $date])->groupBy('Center.id');
+            )->find('members', ['date' => $date]);
         $this->set(compact('departments'));
         $this->set('_serialize', ['departments']);
     }
