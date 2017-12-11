@@ -30,7 +30,8 @@ return [
         [
             'role' => 'admin',
             'controller' => 'Services',
-            'action' => ['add', 'edit', 'view'],
+            'action' => ['add', 'edit', 'view',
+                'addByBhaktaAndDepartment.json'],
         ],
     ]
 ];
